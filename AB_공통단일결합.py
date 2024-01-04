@@ -81,8 +81,8 @@ def main():
         last_value = last_row[column_name]
         
         # 값이 문자열이고, 한자리 수 정수이면 범주형
-        if isinstance(first_value, str) or (first_value > 0 and first_value < 10) and \
-                isinstance(last_value, str) or (last_value > 0 and last_value < 10) :
+        if (isinstance(first_value, str) or (first_value > 0 and first_value < 10)) and \
+                (isinstance(last_value, str) or (last_value > 0 and last_value < 10)) :
             
             if isinstance(first_value, float) or isinstance(last_value, float)  :
                numeric_columns.append(column_name)
@@ -93,8 +93,8 @@ def main():
     print(categorical_columns)
 
 
-    # 범주형 데이터 추출
-    categorical_data(final_result, categorical_columns)
+    # # 범주형 데이터 추출
+    # categorical_data(final_result, categorical_columns)
 
     # 조인 결과 확인
     # final_result.show(truncate=False)
