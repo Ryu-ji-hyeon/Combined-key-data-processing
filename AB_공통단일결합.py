@@ -10,8 +10,40 @@ import pandas as pd
 #B : id,att1~att50
 
 start = time.time()
-spark = SparkSession.builder.appName('missing').getOrCreate()
+spark = SparkSession.builder.appName('missing').config("spark.executor.memory", "4g").getOrCreate()
 spark.conf.set("spark.sql.analyzer.failAmbiguousSelfJoin", "false")
+
+def categorical_data(df, categorical_columns):
+    # 범주형 데이터만을 포함하는 DataFrame 생성
+    final_result_categorical = df.select(*categorical_columns)
+
+    # 전체 범주형 데이터 칼럼에 대한 빈도 수와 구성 비 계산
+    total_summary_df = final_result_categorical.agg(
+        count(lit(1)).alias("총 빈도수"),
+        (count(lit(1)) / final_result_categorical.count()).alias("총 구성 비")
+    )
+
+    # 각 범주형 데이터 칼럼에 대한 빈도 수와 구성 비 계산
+    individual_summaries = []
+
+    for col_name in categorical_columns:
+        col_summary = final_result_categorical.groupBy(col_name).agg(
+            count(lit(1)).alias("빈도수"),
+            ((count(lit(1)) / final_result_categorical.count()) * 100).alias("구성 비")
+        )
+
+        # format_number를 사용하여 소수점 둘째자리까지 표현
+        col_summary = col_summary.withColumn("구성 비", format_number(col("구성 비"), 2))
+
+        individual_summaries.append((col_name, col_summary))
+
+    # 결과 출력
+    print("\n각 범주형 데이터 칼럼에 대한 빈도 수와 구성 비:")
+    for col_name, col_summary in individual_summaries:
+       print(f"\n칼럼: {col_name}")
+       col_summary.show(truncate=False, vertical=True)
+
+    return total_summary_df, individual_summaries
 
 A_B = spark.read.csv('AB_공통단일결합.csv', header=True, inferSchema=True)
 A = spark.read.csv('A_id_attr.csv', header=True, inferSchema=True)
@@ -36,47 +68,19 @@ final_result = result_A.join(result_B, result_A . B_id_a == result_B . id_b , ho
 # StringType의 열을 포함하여 categorical_columns 정의
 categorical_columns = ['attr2_a', 'attr5_a', 'attr10_a', 'attr29', 'attr30', 'attr31', 'attr32', 'attr33', 'attr34', 'attr35', 'attr44', 'attr45']
 
-# 범주형 데이터만을 포함하는 DataFrame 생성
-final_result_categorical = final_result.select(*categorical_columns)
-
-# 전체 범주형 데이터 칼럼에 대한 빈도 수와 구성 비 계산
-total_summary_df = final_result_categorical.agg(
-    count(lit(1)).alias("총 빈도수"),
-    (count(lit(1)) / final_result_categorical.count()).alias("총 구성 비")
-)
-# # 결과 출력
-# print("전체 빈도 수와 구성 비:")
-# total_summary_df.show(truncate=False)
-
-# 각 범주형 데이터 칼럼에 대한 빈도 수와 구성 비 계산
-individual_summaries = []
-
-for col_name in categorical_columns:
-    col_summary = final_result_categorical.groupBy(col_name).agg(
-        count(lit(1)).alias("빈도수"),
-        ((count(lit(1)) / final_result_categorical.count()) * 100).alias("구성 비")
-    )
-    
-    # format_number를 사용하여 소수점 둘째자리까지 표현
-    col_summary = col_summary.withColumn("구성 비", format_number(col("구성 비"), 2))
-    
-    individual_summaries.append((col_name, col_summary))
-
-print("\n각 범주형 데이터 칼럼에 대한 빈도 수와 구성 비:")
-for col_name, col_summary in individual_summaries:
-    print(f"\n칼럼: {col_name}")
-    col_summary.show(truncate=False, vertical=True)
+# 범주형 데이터 추출
+categorical_data(final_result, categorical_columns)
 
 
 
 
-# 결과 확인
+# 조인 결과 확인
 # final_result.show(truncate=False)
-
 # column_count = len(final_result.columns)
 # print(f"Row count: {final_result.count()}")
 # print(f"Column count: {column_count}")
 
+##시간 확인
 # end = time.time()
 # print(end-start)
 
