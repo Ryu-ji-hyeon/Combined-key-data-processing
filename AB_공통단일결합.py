@@ -11,7 +11,46 @@ import pandas as pd
 #B : id,att1~att50
 
 spark = SparkSession.builder.appName('missing').config("spark.executor.memory", "4g").getOrCreate()
+
 spark.conf.set("spark.sql.analyzer.failAmbiguousSelfJoin", "false")
+spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
+
+def numeric_data(df, numeric_columns):
+
+    # numeric_columns에 대한 결과만 선택
+    numeric_summary = df.select(*numeric_columns)
+    quantiles = []
+
+    for col_name in numeric_columns:
+       
+       # 정수 타입의 컬럼에 대해서는 Double 형식으로 변환
+       numeric_summary = numeric_summary.withColumn(col_name, numeric_summary[col_name].cast('float'))
+
+       min_value = numeric_summary.select(min(col_name)).collect()[0][0]
+       quantiles1 = numeric_summary.approxQuantile(col_name, [0.25], 0.01)
+       quantiles2 = numeric_summary.approxQuantile(col_name, [0.5], 0.01)
+       quantiles3 = numeric_summary.approxQuantile(col_name, [0.75], 0.01)
+       quantiles4 = numeric_summary.approxQuantile(col_name, [1.0], 0.01)
+       quantiles.append(col_name)
+       quantiles.append(min_value)
+       quantiles.append(quantiles1)
+       quantiles.append(quantiles2)
+       quantiles.append(quantiles3)
+       quantiles.append(quantiles4)
+       
+    for i in range(0, len(quantiles), 6):
+        print(f"\n칼럼: {quantiles[i]}")
+        print(f"최솟값: {quantiles[i + 1]}")
+        print(f"1사분위수: {quantiles[i + 2]}")
+        print(f"중앙값 (2사분위수): {quantiles[i + 3]}")
+        print(f"3사분위수: {quantiles[i + 4]}")
+        print(f"최대값: {quantiles[i + 5]}")
+        print("\n" + "=" * 30)
+  
+
+    return quantiles
+
+
 
 def categorical_data(df, categorical_columns):
     # 범주형 데이터만을 포함하는 DataFrame 생성
@@ -51,20 +90,19 @@ def save_to_csv(individual_summaries):
 
     # 각 범주형 데이터 칼럼에 대한 빈도 수와 구성 비를 저장할 데이터프레임 초기화
     all_data_df = pd.DataFrame()
-    output_path = "범주형데이터.csv"
+    output_path = "범주형 데이터.csv"
 
     # 모든 데이터를 한 개의 CSV 파일로 저장
     for col_name, col_summary in individual_summaries:
         col_summary_pd = pd.DataFrame(col_summary.collect())
-        col_summary_pd.columns = ['칼럼 이름','빈도수','구성비(%)']
+        col_summary_pd.columns = [col_name,'빈도수','구성비(%)']
         
         # col_name을 파일 이름으로 사용하여 데이터프레임을 통합
         all_data_df = pd.concat([all_data_df, col_summary_pd], axis=1)
 
 
-
     # 모든 데이터프레임을 한 개의 CSV 파일로 저장
-    all_data_df.to_csv(output_path, index=False, encoding='utf-8')
+    all_data_df.to_csv(output_path, index=False, encoding='euc-kr')
 
 
 
@@ -113,14 +151,19 @@ def main():
                categorical_columns.append(column_name)
         else:
             numeric_columns.append(column_name)
-    print(categorical_columns)
 
 
-    # 범주형 데이터 추출
-    individual_summaries=categorical_data(final_result, categorical_columns)
+    # 수치형 데이터 추출
+    quantiles = numeric_data(final_result, numeric_columns)
 
-    # 결과를 CSV 파일로 저장
-    save_to_csv(individual_summaries)
+
+
+    # print(categorical_columns)
+    # # 범주형 데이터 추출
+    # individual_summaries=categorical_data(final_result, categorical_columns)
+
+    # # 범주형 데이터 CSV 파일로 저장
+    # save_to_csv(individual_summaries)
 
     # 조인 결과 확인
     # final_result.show(truncate=False)
