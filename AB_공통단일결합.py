@@ -44,26 +44,27 @@ def categorical_data(df, categorical_columns):
     #    col_summary.show(truncate=False, vertical=True)
     
 
-    return total_summary_df, individual_summaries
+    return individual_summaries
 
-import pandas as pd
 
-def save_to_csv(individual_summaries, output_path):
+def save_to_csv(individual_summaries):
 
     # 각 범주형 데이터 칼럼에 대한 빈도 수와 구성 비를 저장할 데이터프레임 초기화
     all_data_df = pd.DataFrame()
+    output_path = "범주형데이터.csv"
 
     # 모든 데이터를 한 개의 CSV 파일로 저장
     for col_name, col_summary in individual_summaries:
         col_summary_pd = pd.DataFrame(col_summary.collect())
-
+        col_summary_pd.columns = ['칼럼 이름','빈도수','구성비(%)']
+        
         # col_name을 파일 이름으로 사용하여 데이터프레임을 통합
         all_data_df = pd.concat([all_data_df, col_summary_pd], axis=1)
 
 
 
     # 모든 데이터프레임을 한 개의 CSV 파일로 저장
-    all_data_df.to_csv(output_path, index=False)
+    all_data_df.to_csv(output_path, index=False, encoding='utf-8')
 
 
 
@@ -90,8 +91,8 @@ def main():
     # A, B, C의 조인 결과를 A_B를 기준으로 조인
     final_result = result_A.join(result_B, result_A . B_id_a == result_B . id_b , how="inner")
 
-    numeric_columns = []
-    categorical_columns = []
+    numeric_columns = [] # 수치형 데이터
+    categorical_columns = [] # 범주형 데이터
 
     # 데이터프레임의 첫번째 행과 마지막 행 추출
     first_row = final_result.head(1)[0]
@@ -102,7 +103,7 @@ def main():
         first_value = first_row[column_name]
         last_value = last_row[column_name]
         
-        # 값이 문자열이고, 한자리 수 정수이면 범주형
+        # 값이 문자열이고, 한자리 수 정수이면 범주형, 나머지 수치형
         if (isinstance(first_value, str) or (first_value >= 0 and first_value < 10)) and \
                 (isinstance(last_value, str) or (last_value >= 0 and last_value < 10)) :
             
@@ -116,12 +117,10 @@ def main():
 
 
     # 범주형 데이터 추출
-    total_summary_df, individual_summaries=categorical_data(final_result, categorical_columns)
-     # CSV 파일 저장 경로
-    output_path = "output.csv"
+    individual_summaries=categorical_data(final_result, categorical_columns)
 
     # 결과를 CSV 파일로 저장
-    save_to_csv(individual_summaries, output_path)
+    save_to_csv(individual_summaries)
 
     # 조인 결과 확인
     # final_result.show(truncate=False)
