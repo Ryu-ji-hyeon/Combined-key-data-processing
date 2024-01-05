@@ -37,13 +37,35 @@ def categorical_data(df, categorical_columns):
 
         individual_summaries.append((col_name, col_summary))
 
-    # 결과 출력
-    print("\n각 범주형 데이터 칼럼에 대한 빈도 수와 구성 비:")
-    for col_name, col_summary in individual_summaries:
-       print(f"\n칼럼: {col_name}")
-       col_summary.show(truncate=False, vertical=True)
+    # # 결과 출력
+    # print("\n각 범주형 데이터 칼럼에 대한 빈도 수와 구성 비:")
+    # for col_name, col_summary in individual_summaries:
+    #    print(f"\n칼럼: {col_name}")
+    #    col_summary.show(truncate=False, vertical=True)
+    
 
     return total_summary_df, individual_summaries
+
+import pandas as pd
+
+def save_to_csv(individual_summaries, output_path):
+
+    # 각 범주형 데이터 칼럼에 대한 빈도 수와 구성 비를 저장할 데이터프레임 초기화
+    all_data_df = pd.DataFrame()
+
+    # 모든 데이터를 한 개의 CSV 파일로 저장
+    for col_name, col_summary in individual_summaries:
+        col_summary_pd = pd.DataFrame(col_summary.collect())
+
+        # col_name을 파일 이름으로 사용하여 데이터프레임을 통합
+        all_data_df = pd.concat([all_data_df, col_summary_pd], axis=1)
+
+
+
+    # 모든 데이터프레임을 한 개의 CSV 파일로 저장
+    all_data_df.to_csv(output_path, index=False)
+
+
 
 def main():
 
@@ -94,7 +116,12 @@ def main():
 
 
     # 범주형 데이터 추출
-    categorical_data(final_result, categorical_columns)
+    total_summary_df, individual_summaries=categorical_data(final_result, categorical_columns)
+     # CSV 파일 저장 경로
+    output_path = "output.csv"
+
+    # 결과를 CSV 파일로 저장
+    save_to_csv(individual_summaries, output_path)
 
     # 조인 결과 확인
     # final_result.show(truncate=False)
