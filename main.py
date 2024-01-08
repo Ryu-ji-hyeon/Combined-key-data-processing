@@ -54,17 +54,11 @@ def main():
             numeric_columns.append(column_name)
 
 
-    # # 수치형 데이터 추출
-    # numeric_data(final_result, numeric_columns)
-
-
+    # 수치형 데이터 추출
+    numeric_data(final_result, numeric_columns)
 
     # 범주형 데이터 추출
-    # print(categorical_columns)
     categorical_data(final_result, categorical_columns)
-
-    # # 범주형 데이터 CSV 파일로 저장
-    # save_to_csv(individual_summaries)
 
     # 조인 결과 확인
     # final_result.show(truncate=False)
