@@ -53,12 +53,28 @@ def main():
         else:
             numeric_columns.append(column_name)
 
+    exclude_columns = ['A_id_a', 'B_id_a', 'id_a', 'A_id_b', 'B_id_b', 'id_b']
 
-    # 수치형 데이터 추출
-    numeric_data(final_result, numeric_columns)
+    # # 모든 컬럼에 대해 반복, order by사용
+    # max_values = []
 
-    # 범주형 데이터 추출
-    categorical_data(final_result, categorical_columns)
+    # for column_name in final_result.columns:
+    #     # 제외할 컬럼이 아닌 경우에만 진행
+    #     if column_name not in exclude_columns:
+    #         # 가장 큰 값 찾기
+    #         max_value = final_result.agg({column_name: "max"}).collect()[0][0]
+    #         max_values.append((column_name, max_value))
+    #     # 결과 출력
+    # for column, value in max_values:
+    #     print(f"\n컬럼: {column}")
+    #     print(f"가장 큰 값: {value}")
+
+
+    # # 수치형 데이터 추출
+    # numeric_data(final_result, numeric_columns)
+
+    # # 범주형 데이터 추출
+    # categorical_data(final_result, categorical_columns)
 
     # 조인 결과 확인
     # final_result.show(truncate=False)
