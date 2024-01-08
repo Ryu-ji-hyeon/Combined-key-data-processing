@@ -15,40 +15,29 @@ spark = SparkSession.builder.appName('missing').config("spark.executor.memory", 
 spark.conf.set("spark.sql.analyzer.failAmbiguousSelfJoin", "false")
 spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
 
-def numeric_data(df, numeric_columns):
+from pyspark.sql.functions import min
 
+def numeric_data(df, numeric_columns):
     # numeric_columns에 대한 결과만 선택
     numeric_summary = df.select(*numeric_columns)
     quantiles = []
 
     for col_name in numeric_columns:
-       
-       # 정수 타입의 컬럼에 대해서는 Double 형식으로 변환
-       numeric_summary = numeric_summary.withColumn(col_name, numeric_summary[col_name].cast('float'))
+        # 정수 타입의 컬럼에 대해서는 Double 형식으로 변환
+        numeric_summary = numeric_summary.withColumn(col_name, numeric_summary[col_name].cast('float'))
 
-       min_value = numeric_summary.select(min(col_name)).collect()[0][0]
-       quantiles1 = numeric_summary.approxQuantile(col_name, [0.25], 0.01)
-       quantiles2 = numeric_summary.approxQuantile(col_name, [0.5], 0.01)
-       quantiles3 = numeric_summary.approxQuantile(col_name, [0.75], 0.01)
-       quantiles4 = numeric_summary.approxQuantile(col_name, [1.0], 0.01)
-       quantiles.append(col_name)
-       quantiles.append(min_value)
-       quantiles.append(quantiles1)
-       quantiles.append(quantiles2)
-       quantiles.append(quantiles3)
-       quantiles.append(quantiles4)
-       
-    for i in range(0, len(quantiles), 6):
-        print(f"\n칼럼: {quantiles[i]}")
-        print(f"최솟값: {quantiles[i + 1]}")
-        print(f"1사분위수: {quantiles[i + 2]}")
-        print(f"중앙값 (2사분위수): {quantiles[i + 3]}")
-        print(f"3사분위수: {quantiles[i + 4]}")
-        print(f"최대값: {quantiles[i + 5]}")
-        print("\n" + "=" * 30)
-  
+        min_value = numeric_summary.select(min(col_name)).collect()[0][0]
+        quantiles1 = numeric_summary.approxQuantile(col_name, [0.25], 0.01)
+        quantiles2 = numeric_summary.approxQuantile(col_name, [0.5], 0.01)
+        quantiles3 = numeric_summary.approxQuantile(col_name, [0.75], 0.01)
+        quantiles4 = numeric_summary.approxQuantile(col_name, [1.0], 0.01)
+
+        # 수정: 각 값을 한 번에 추가
+        quantiles.append([col_name, min_value, quantiles1, quantiles2, quantiles3, quantiles4])
+        print(quantiles)
 
     return quantiles
+
 
 
 
