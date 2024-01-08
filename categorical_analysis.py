@@ -47,5 +47,5 @@ def categorical_data(df, categorical_columns):
     #    print(f"\n칼럼: {col_name}")
     #    col_summary.show(truncate=False, vertical=True)
     
-    #csv파일 만드는데까지 13분
+    # csv파일 만드는데까지 13분
     return individual_summaries
