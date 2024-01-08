@@ -23,7 +23,7 @@ def numeric_data(df, numeric_columns):
         quantiles.append([col_name, min_value, quantiles1, quantiles2, quantiles3, quantiles4])
 
     # 판다스 데이터프레임으로 변환
-    columns = ['col_name', 'min_value', 'quantiles1', 'quantiles2', 'quantiles3', 'quantiles4']
+    columns = ['컬럼명', '최소값', '1분위수(25%)', '2분위수(중앙값)', '3분위수(75%)', '최대값']
     pd_df = pd.DataFrame(quantiles, columns=columns)
 
     # CSV 파일로 저장
