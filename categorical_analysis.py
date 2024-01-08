@@ -8,7 +8,7 @@ def categorical_data(df, categorical_columns):
     final_result_categorical = df.select(*categorical_columns)
 
     # 전체 범주형 데이터 칼럼에 대한 빈도 수와 구성 비 계산
-    total_summary_df = final_result_categorical.agg(
+    final_result_categorical.agg(
         count(lit(1)).alias("총 빈도수"),
         (count(lit(1)) / final_result_categorical.count()).alias("총 구성 비")
     )
