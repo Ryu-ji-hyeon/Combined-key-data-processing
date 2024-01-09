@@ -7,13 +7,12 @@ import pandas as pd
 
 spark = SparkSession.builder.appName('missing').config("spark.executor.memory", "4g").getOrCreate()
 
-#서버에서 작업
 def main():
 
     start = time.time()
-    A_B = spark.read.csv('AB_공통단일결합.csv', header=True, inferSchema=True)
-    A = spark.read.csv('A_id_attr.csv', header=True, inferSchema=True)
-    B = spark.read.csv('B_id_attr.csv', header=True, inferSchema=True)
+    A_B = spark.read.csv('/home/data/AB_공통단일결합.csv', header=True, inferSchema=True)
+    A = spark.read.csv('/home/data/A_id_attr.csv', header=True, inferSchema=True)
+    B = spark.read.csv('/home/data/B_id_attr.csv', header=True, inferSchema=True)
 
     # A_B를 기준으로 A와 조인
     result_A = A_B.join(A, A_B.A_id  == A.id, how="inner")
@@ -34,48 +33,64 @@ def main():
     numeric_columns = [] # 수치형 데이터
     categorical_columns = [] # 범주형 데이터
 
-    # 데이터프레임의 첫번째 행과 마지막 행 추출
-    first_row = final_result.head(1)[0]
-    last_row = final_result.tail(1)[0]
-
-    for column_name in final_result.columns:
-        # 첫번째 행과 마지막 행의 값을 추출
-        first_value = first_row[column_name]
-        last_value = last_row[column_name]
-        
-        # 값이 문자열이고, 한자리 수 정수이면 범주형, 나머지 수치형
-        if (isinstance(first_value, str) or (first_value >= 0 and first_value < 10)) and \
-                (isinstance(last_value, str) or (last_value >= 0 and last_value < 10)) :
-            
-            if isinstance(first_value, float) or isinstance(last_value, float)  :
-               numeric_columns.append(column_name)
-            else :
-               categorical_columns.append(column_name)
-        else:
-            numeric_columns.append(column_name)
-
-    exclude_columns = ['A_id_a', 'B_id_a', 'id_a', 'A_id_b', 'B_id_b', 'id_b']
-
-    # # 모든 컬럼에 대해 반복, order by사용
-    # max_values = []
+    # # 데이터프레임의 첫번째 행과 마지막 행 추출
+    # first_row = final_result.head(1)[0]
+    # last_row = final_result.tail(1)[0]
 
     # for column_name in final_result.columns:
-    #     # 제외할 컬럼이 아닌 경우에만 진행
-    #     if column_name not in exclude_columns:
-    #         # 가장 큰 값 찾기
-    #         max_value = final_result.agg({column_name: "max"}).collect()[0][0]
-    #         max_values.append((column_name, max_value))
-    #     # 결과 출력
-    # for column, value in max_values:
-    #     print(f"\n컬럼: {column}")
-    #     print(f"가장 큰 값: {value}")
+    #     # 첫번째 행과 마지막 행의 값을 추출
+    #     first_value = first_row[column_name]
+    #     last_value = last_row[column_name]
+        
+    #     # 값이 문자열이고, 한자리 수 정수이면 범주형, 나머지 수치형
+    #     if (isinstance(first_value, str) or (first_value >= 0 and first_value < 10)) and \
+    #             (isinstance(last_value, str) or (last_value >= 0 and last_value < 10)) :
+            
+    #         if isinstance(first_value, float) or isinstance(last_value, float)  :
+    #            numeric_columns.append(column_name)
+    #         else :
+    #            categorical_columns.append(column_name)
+    #     else:
+    #         numeric_columns.append(column_name)
 
 
+
+    # 모든 컬럼에 대해 반복, order by사용
+    exclude_columns = ['A_id_a', 'B_id_a', 'id_a', 'A_id_b', 'B_id_b', 'id_b']
+    max_values = []
+
+    for column_name in final_result.columns:
+        # 제외할 컬럼이 아닌 경우에만 진행
+         if column_name not in exclude_columns:
+            # 가장 큰 값 찾기
+            max_value = final_result.agg({column_name: "max"}).collect()[0][0]
+            max_values.append((column_name, max_value))
+            
+            
+    for column, value in max_values:
+        print(f"\n컬럼: {column}")
+        print(f"가장 큰 값: {value}")
+        # 값이 문자열이고, 한자리 수 정수이면 범주형, 나머지 수치형
+        if (isinstance(value, str) or (value >= 0 and value < 10)):       
+            if isinstance(value, float):
+               numeric_columns.append(column)
+            else :
+               categorical_columns.append(column)
+        else:
+            numeric_columns.append(column)
+    print(numeric_columns)
+    print(categorical_columns)
     # # 수치형 데이터 추출
-    # numeric_data(final_result, numeric_columns)
+    # quantiles = numeric_data(final_result, numeric_columns)
 
-    # # 범주형 데이터 추출
-    # categorical_data(final_result, categorical_columns)
+
+
+    # print(categorical_columns)
+    # 범주형 데이터 추출
+    # individual_summaries=categorical_data(final_result, categorical_columns)
+
+    # # 범주형 데이터 CSV 파일로 저장
+    # save_to_csv(individual_summaries)
 
     # 조인 결과 확인
     # final_result.show(truncate=False)
