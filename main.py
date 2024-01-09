@@ -7,6 +7,7 @@ import pandas as pd
 
 spark = SparkSession.builder.appName('missing').config("spark.executor.memory", "4g").getOrCreate()
 
+#서버에서 작업
 def main():
 
     start = time.time()
