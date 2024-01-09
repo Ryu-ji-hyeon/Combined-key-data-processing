@@ -10,9 +10,9 @@ spark = SparkSession.builder.appName('missing').config("spark.executor.memory", 
 def main():
 
     start = time.time()
-    A_B = spark.read.csv('/home/data/AB_공통단일결합.csv', header=True, inferSchema=True)
-    A = spark.read.csv('/home/data/A_id_attr.csv', header=True, inferSchema=True)
-    B = spark.read.csv('/home/data/B_id_attr.csv', header=True, inferSchema=True)
+    A_B = spark.read.csv('AB_공통단일결합.csv', header=True, inferSchema=True)
+    A = spark.read.csv('A_id_attr.csv', header=True, inferSchema=True)
+    B = spark.read.csv('B_id_attr.csv', header=True, inferSchema=True)
 
     # A_B를 기준으로 A와 조인
     result_A = A_B.join(A, A_B.A_id  == A.id, how="inner")
