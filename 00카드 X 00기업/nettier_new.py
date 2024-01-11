@@ -6,8 +6,6 @@ from pyspark.sql.types import StructType, StructField, IntegerType, StringType
 import time
 import pandas as pd
 
-##파일 이동
-
 spark = SparkSession.builder.appName('missing').config("spark.executor.memory", "4g").getOrCreate()
 
 def main():
