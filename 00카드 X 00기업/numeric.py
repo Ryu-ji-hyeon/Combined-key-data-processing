@@ -3,16 +3,11 @@ from pyspark.sql.functions import min, lit, count
 from pyspark.sql import functions as F
 from pyspark.sql.functions import *
 import pandas as pd
-from pyspark.sql.types import DoubleType,StructField
-
-spark = SparkSession.builder.appName("example").getOrCreate()
 
 def numeric_data(df, numeric_columns):
+    # numeric_columns에 대한 결과만 선택
     numeric_summary = df.select(*numeric_columns)
     quantiles = []
-
-    # 정의된 컬럼
-    columns = ['컬럼명', '최소값', '1분위수(25%)', '2분위수(중앙값)', '3분위수(75%)', '최대값']
 
     for col_name in numeric_columns:
         # 정수 타입의 컬럼에 대해서는 Double 형식으로 변환
@@ -25,11 +20,14 @@ def numeric_data(df, numeric_columns):
         quantiles4 = numeric_summary.approxQuantile(col_name, [1.0], 0.01)
 
         # 수정: 각 값을 한 번에 추가
-        quantiles.append([col_name, float(min_value), float(quantiles1[0]), float(quantiles2[0]), float(quantiles3[0]), float(quantiles4[0])])
+        quantiles.append([col_name, min_value, quantiles1, quantiles2, quantiles3, quantiles4])
 
-    # Spark DataFrame으로 변환
-    schema = StructType([StructField(name, DoubleType(), True) for name in columns])
-    spark_df = spark.createDataFrame(quantiles, schema=schema)
+    # 판다스 데이터프레임으로 변환
+    columns = ['컬럼명', '최소값', '1분위수(25%)', '2분위수(중앙값)', '3분위수(75%)', '최대값']
+    pd_df = pd.DataFrame(quantiles, columns=columns)
 
-    # Spark DataFrame 사용
-    spark_df.show()
+    # CSV 파일로 저장
+    output_path = "수치형 데이터.csv"
+    pd_df.to_csv(output_path, index=False, encoding='euc-kr') 
+
+    return quantiles
