@@ -28,8 +28,8 @@ def main():
     
     # Like
     df_spark.filter(col('col5').like('%2%')).select(col('col6').alias('Like')).show()
-    df_spark.filter(col('col5').startswith('A')).select(col('col6').alias('startwiths')).show()
-    df_spark.filter(col('col5').endswith('1')).select(col('col6').alias('endwiths')).show()
+    df_spark.filter(col('col5').startswith('A')).select(col('col6').alias('startswith')).show()
+    df_spark.filter(col('col5').startswith('1')).select(col('col6').alias('endwiths')).show()
     df_spark.filter(col('col5').contains('1')).select(col('col6').alias('contains')).show()
     
     # groupBy, agg
@@ -39,7 +39,7 @@ def main():
     df_spark.groupBy("col5").max("데이터건수_col5").alias('max').show() 
     df_spark.groupBy("col5").avg("데이터건수_col5").alias('avg').show()
     (df_spark.groupBy("col5")
-    .agg(sum("데이터건수_col5").alias("sum_agg")
+    .agg(count("데이터건수_col5").alias("count_agg")
         , avg("데이터건수_col5").alias("avg_agg")
         , sum("데이터건수_col5").alias("sum_agg")
         , max("데이터건수_col5").alias("max_agg"))).show()
@@ -72,7 +72,6 @@ def main():
     # row_number
     df_spark.withColumn('col5'
     , row_number().over(Window.partitionBy('col5').orderBy(desc('col5')))).show()
-
 
 
 
