@@ -112,3 +112,14 @@ SELECT
  col7,col10 업종분류,sum(col12) 사용금액
 FROM pamaster_v2_data.nettier
 group by col7,col10
+
+--  공연종류별 + 업종별 소비금액 			
+SELECT
+    col10 AS 업종,
+    SUM(CASE WHEN col14 != 0 THEN col12 ELSE 0 END) AS 오페라소비금액,
+    SUM(CASE WHEN col15 != 0 THEN col12 ELSE 0 END) AS 클래식소비금액,
+    SUM(CASE WHEN col16 != 0 THEN col12 ELSE 0 END) AS 전시회소비금액
+FROM
+    pamaster_v2_data.nettier
+GROUP BY
+    col10;
