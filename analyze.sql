@@ -106,3 +106,9 @@ SELECT
  col6,col10 업종분류,sum(col12) 사용금액
 FROM pamaster_v2_data.nettier
 group by col6,col10
+
+--  고객분류별 + 업종별 소비금액 																																			
+SELECT 
+ col7,col10 업종분류,sum(col12) 사용금액
+FROM pamaster_v2_data.nettier
+group by col7,col10
