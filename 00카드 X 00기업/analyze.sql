@@ -123,3 +123,58 @@ FROM
     pamaster_v2_data.nettier
 GROUP BY
     col10;
+
+
+-- 테이블 데이터 변경
+START TRANSACTION;
+    savepoint a1;
+
+    UPDATE pamaster_v2_data.nettier
+    SET col8 = SUBSTRING(col8, 1, 6)
+
+    savepoint a2;
+
+    UPDATE pamaster_v2_data.nettier
+    SET col10 = '인삼제품'
+    WHERE col10 ='8402'
+
+    savepoint a3;
+
+    ALTER TABLE pamaster_v2_data.nettier
+    ADD COLUMN col19 text;
+
+    UPDATE pamaster_v2_data.nettier
+    SET col19 = SUBSTRING(col11, 1, 4);
+
+    savepoint a4;
+
+    ALTER TABLE pamaster_v2_data.nettier
+    ADD COLUMN col20 text;
+
+    UPDATE pamaster_v2_data.nettier
+    SET col20 = '양평군'
+    where col19 ='4183'
+
+    savepoint a5;
+
+    ALTER TABLE pamaster_v2_data.nettier
+    ADD COLUMN col17 text;
+
+    UPDATE pamaster_v2_data.nettier
+    SET col17 = SUBSTRING(col4, 1, 2);
+
+    ALTER TABLE pamaster_v2_data.nettier
+    ADD COLUMN col18 text;
+
+    UPDATE pamaster_v2_data.nettier
+    SET col18 = '강원도'
+    where col17 ='51'
+
+    savepoint a6;
+
+    UPDATE pamaster_v2_data.nettier
+    SET col4 = '경산시'
+    where col4 ='4729'
+
+commit;
+rollback to a1;
