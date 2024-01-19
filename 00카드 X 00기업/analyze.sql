@@ -178,3 +178,38 @@ START TRANSACTION;
 
 commit;
 rollback to a1;
+
+-- col21 추가 및 데이터 삽입
+ALTER TABLE pamaster_v2_data.nettier
+ADD COLUMN col21 text;
+
+UPDATE pamaster_v2_data.nettier
+SET 
+CASE WHEN SUBSTRING(col11, 1, 2) = 41 THEN col21 = '경기도' ELSE col11 
+CASE WHEN SUBSTRING(col11, 1, 2) = 11 THEN col21 = '서울특별시' ELSE col11 
+END  
+
+
+-- 회원의 거주지 분포 현황(광역시)
+SELECT 
+  col18, count(col4) 
+from pamaster_v2_data.nettier
+group by col18
+
+-- 자택주소지별 공연 관람 빈도(광역시)
+SELECT 
+ col18,sum(col14)오페라, sum(col15) 클래식,sum(col16) 전시회
+FROM pamaster_v2_data.nettier
+group by col18
+
+-- 가맹점 소재지별 카드 사용 금액(광역시)
+SELECT 
+ col21 소재지,sum(col12) 사용금액
+FROM pamaster_v2_data.nettier
+group by col21
+
+-- 자택주소지별 + 업종별 소비금액(광역시)
+SELECT 
+ col10,col18 업종분류,sum(col12) 사용금액
+FROM pamaster_v2_data.nettier
+group by col10,col18
