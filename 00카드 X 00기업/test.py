@@ -15,11 +15,11 @@ start = time.time()
 a_2000 = spark.read.csv("/home/data/최종결과_1120_4.csv", header=True, inferSchema=True,encoding='cp949')
 a1_2000 = spark.read.csv("/home/data/최종결과_1120_4.csv", header=True, inferSchema=True,encoding='cp949')
 
-aa = a_2000.union(a_2000).union(a_2000).union(a_2000).union(a_2000)
-aa1 = a1_2000.union(a1_2000).union(a1_2000).union(a1_2000).union(a1_2000)
+aa = a_2000.union(a_2000).union(a_2000).union(a_2000).union(a_2000).a_2000.union(a_2000).union(a_2000).union(a_2000).union(a_2000)
+aa1 = a1_2000.union(a1_2000).union(a1_2000).union(a1_2000).union(a1_2000).a1_2000.union(a1_2000).union(a1_2000).union(a1_2000).union(a1_2000)
 # aa.show()
-aa_seq_id = aa.withColumn("seq_id", monotonically_increasing_id())
 
+aa_seq_id = aa.withColumn("seq_id", monotonically_increasing_id())
 result_A = aa_seq_id.join(aa1, aa_seq_id.seq_id  == aa1.colNo, how="inner")
 result_A.show()
 
