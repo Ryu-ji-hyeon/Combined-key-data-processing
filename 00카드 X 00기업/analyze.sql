@@ -192,7 +192,7 @@ END
 
 -- 회원의 거주지 분포 현황(광역시)
 SELECT 
-  col18, count(col4) 
+  col18, count(col18) 
 from pamaster_v2_data.nettier
 group by col18
 
