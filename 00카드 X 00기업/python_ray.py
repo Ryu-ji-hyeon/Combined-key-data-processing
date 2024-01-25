@@ -2,7 +2,7 @@ import ray
 import pandas as pd
 import time
 
-ray.init(object_store_memory=128 * 1024 * 1024)  # 128 MB
+ray.init(object_store_memory=4 * 1024 * 1024* 1024)  # 4GB
 
 @ray.remote
 def read_csv(file_path):
