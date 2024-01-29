@@ -14,9 +14,9 @@ def data_analyze(join_result):
     # # 8억건
     # aa = spark.read.csv("/home/data/bc_sac_202312141739_final-20231215163224.csv", header=True, inferSchema=True)
     # 2천만건
-    a_2000 = spark.read.csv("/home/data/최종결과_1120_4.csv", header=True, inferSchema=True,encoding='utf-8')   
+    a_2000 = spark.read.csv("data/2천만건_컬럼 21.csv", header=True, inferSchema=True,encoding='utf-8')   
     # 1억건
-    a_1 = spark.read.csv("/home/data/plus_id/part-00000-1fadca7f-492d-4d8a-a3ca-de7ac97b188e-c000.csv", header=True, inferSchema=True,encoding='utf-8')
+    a_1 = spark.read.csv(("data/plus_id/1억건_id.csv"), header=True, inferSchema=True,encoding='utf-8')
 
     result_df = pd.DataFrame(join_result)
     result_spark_df = spark.createDataFrame(result_df)

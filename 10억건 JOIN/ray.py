@@ -26,9 +26,9 @@ def data_join():
     start = time.time()
 
     # 2천만건
-    a_2000 = read_csv1.remote("/home/data/최종결과_1120_4.csv")
+    a_2000 = read_csv1.remote("data/2천만건_컬럼 21.csv")
     # 1억건
-    a1_2000 = read_csv.remote("/home/data/plus_id/part-00000-1fadca7f-492d-4d8a-a3ca-de7ac97b188e-c000.csv")
+    a1_2000 = read_csv.remote("data/plus_id/1억건_id.csv")
 
 
     # aa = pd.concat([a_2000] * 5, ignore_index=True)
