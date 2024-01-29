@@ -7,12 +7,12 @@ import psutil
 total_memory_gb = psutil.virtual_memory().total / (1024 ** 3)
 
 # 사용 가능한 메모리에 따라 값 설정 (바이트 단위
-ray.init(object_store_memory=128 * 1024 * 1024)  # 128 MB
-
+ray.init()  
 # 1억건
 @ray.remote
 def read_csv(file_path):
         return pd.read_csv(file_path, header=0, encoding='utf-8', low_memory=True, usecols=["id"])
+    
 # 2천만건
 @ray.remote
 def read_csv1(file_path):
@@ -25,11 +25,13 @@ def merge_data(a1, aa):
 def data_join():
     start = time.time()
 
-    # 2천만건
-    a_2000 = read_csv1.remote("data/2천만건_컬럼 21.csv")
+    # # 2천만건
+    # a_2000 = read_csv1.remote("data/2천만건_컬럼 21.csv")
     # 1억건
     a1_2000 = read_csv.remote("data/plus_id/1억건_id.csv")
 
+    # 1억건
+    a_2000 = read_csv1.remote("data/plus_id/1억건_id.csv")
 
     # aa = pd.concat([a_2000] * 5, ignore_index=True)
     # a1_2000 = pd.concat([a1_2000] * 2, ignore_index=True)

@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 import time
-from python_ray import data_join
+from ray import data_join
 import pandas as pd
 
 
@@ -23,15 +23,18 @@ def data_analyze(join_result):
 
     # result_spark_df에 있는 "id"값들을 가진 행만 필터링
     filtered_result = a_1.filter(col("id").isin(result_spark_df.select("id").rdd.flatMap(lambda x: x).collect()))
+                                 
+
+    
     filtered_result.show()
    
     
 
 
-    row_count = len(filtered_result)
-    column_count = filtered_result.shape[1]
-    print(f"Row count: {row_count}")
-    print(f"Column count: {column_count}")
+    # row_count = len(filtered_result)
+    # column_count = filtered_result.shape[1]
+    # print(f"Row count: {row_count}")
+    # print(f"Column count: {column_count}")
     end = time.time()
     print(int(end-start),'초')
 
