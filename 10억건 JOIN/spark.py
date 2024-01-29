@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 import time
-from ray import data_join
+from python_ray import data_join
 import pandas as pd
 
 
@@ -14,20 +14,24 @@ def data_analyze(join_result):
     # # 8억건
     # aa = spark.read.csv("/home/data/bc_sac_202312141739_final-20231215163224.csv", header=True, inferSchema=True)
     # 2천만건
-    a_2000 = spark.read.csv("/home/data/최종결과_1120_4.csv", header=True, inferSchema=True,encoding='cp949')   
+    a_2000 = spark.read.csv("/home/data/최종결과_1120_4.csv", header=True, inferSchema=True,encoding='utf-8')   
     # 1억건
-    a_1 = spark.read.csv("/home/data/plus_id/part-00000-1fadca7f-492d-4d8a-a3ca-de7ac97b188e-c000.csv", header=True, inferSchema=True,encoding='cp949')
+    a_1 = spark.read.csv("/home/data/plus_id/part-00000-1fadca7f-492d-4d8a-a3ca-de7ac97b188e-c000.csv", header=True, inferSchema=True,encoding='utf-8')
 
     result_df = pd.DataFrame(join_result)
     result_spark_df = spark.createDataFrame(result_df)
-    
-    result_spark_df.show()
+
+    # result_spark_df에 있는 "id"값들을 가진 행만 필터링
+    filtered_result = a_1.filter(col("id").isin(result_spark_df.select("id").rdd.flatMap(lambda x: x).collect()))
+    filtered_result.show()
+   
     
 
 
-    # column_count = len(result_A.columns)
-    # print(f"Row count: {a1_2000.count()}")
-    # print(f"Column count: {column_count}")
+    row_count = len(filtered_result)
+    column_count = filtered_result.shape[1]
+    print(f"Row count: {row_count}")
+    print(f"Column count: {column_count}")
     end = time.time()
     print(int(end-start),'초')
 
