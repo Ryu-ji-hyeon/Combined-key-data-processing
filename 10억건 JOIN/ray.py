@@ -28,15 +28,15 @@ def data_join():
     # # 2천만건
     # a_2000 = read_csv1.remote("data/2천만건_컬럼 21.csv")
     # 1억건
-    a1_2000 = read_csv.remote("data/plus_id/1억건_id.csv")
+    a1_2000 = read_csv.remote("/home/data/2억건.csv/2억건.csv")
 
     # 1억건
-    a_2000 = read_csv1.remote("data/plus_id/1억건_id.csv")
+    a_2000 = read_csv1.remote("/home/data/2억건.csv/2억건.csv")
 
     # aa = pd.concat([a_2000] * 5, ignore_index=True)
     # a1_2000 = pd.concat([a1_2000] * 2, ignore_index=True)
     
-   #  Use ray.put() to store the data in the object store
+    # Use ray.put() to store the data in the object store
     a_2000_id = ray.put(ray.get(a_2000))
     a1_2000_id = ray.put(ray.get(a1_2000))
 
