@@ -2,6 +2,7 @@ import pandas as pd
 import time
 import ray
 import psutil
+from pyspark.sql.functions import *
 
 # 총 사용 가능한 메모리를 가져옵니다 (GB)
 total_memory_gb = psutil.virtual_memory().total / (1024 ** 3)
@@ -22,13 +23,17 @@ def read_csv1(file_path):
 def merge_data(a1, aa):
     return pd.merge(a1, aa, left_on='id', right_on='colNo', how='inner')
 
-def data_join():
+def data_join(a1_2000_id):
     start = time.time()
+    
+    # # 8억건
+    # aa = read_csv.remote("/home/data/8억건.csv")
+    # a1_2000 = ray.get(aa).withColumn("id", monotonically_increasing_id())
 
     # # 2천만건
     # a_2000 = read_csv1.remote("data/2천만건_컬럼 21.csv")
-    # 1억건
-    a1_2000 = read_csv.remote("/home/data/2억건.csv/2억건.csv")
+    # # 1억건
+    # a1_2000 = read_csv.remote("/home/data/2억건.csv/2억건.csv")
 
     # 1억건
     a_2000 = read_csv1.remote("/home/data/2억건.csv/2억건.csv")
@@ -38,7 +43,7 @@ def data_join():
     
     # Use ray.put() to store the data in the object store
     a_2000_id = ray.put(ray.get(a_2000))
-    a1_2000_id = ray.put(ray.get(a1_2000))
+    # a1_2000_id = ray.put(ray.get(a1_2000))
 
     # Inner Join
     result_id = merge_data.remote(a1_2000_id, a_2000_id)
