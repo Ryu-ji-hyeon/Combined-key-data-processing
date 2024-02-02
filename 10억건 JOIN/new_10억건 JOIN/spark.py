@@ -1,9 +1,11 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 import time
-from function import rdd_to_csv
-
-spark = SparkSession.builder.appName('example').config("spark.local.dir", "/run/spark-temp").getOrCreate()
+from aaaa import rdd
+spark = SparkSession.builder.appName('example').config("spark.local.dir", "/home/spark-temp").getOrCreate()
+spark.stop()
+spark = SparkSession.builder.appName('example').config("spark.local.dir", "/home/spark-temp").getOrCreate()
+spark.conf.set("spark.sql.shuffle.partitions", "10000")
 
 
 if __name__ == "__main__":
@@ -19,19 +21,21 @@ if __name__ == "__main__":
 
     # Perform the inner join with aliases
     result = a1_2000_alias.join(aaaaa1_2000_alias, a1_2000_alias.id == aaaaa1_2000_alias.colNo, how='inner')
-    print("성공")
+    print("성공1")
 
     # Cache the DataFrame
     result.cache()
 
     # Select and show the "id" column values
     result_id_values = result.select(col("a1.id")).limit(1)
-    print("성공!!!!!!!!!")
+    print("성공2")
 
     # Convert DataFrame to RDD
     result_rdd = result_id_values.rdd
 
-    rdd_to_csv(result_rdd)
+    if result_rdd is not None:
+        for row in rdd(result_rdd):
+            print("성공!!!!!!!!!!!!!!!")
 
 
 
