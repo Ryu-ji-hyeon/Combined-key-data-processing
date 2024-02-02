@@ -30,7 +30,9 @@ def rdd_iterate(rdd, chunk_size=1000000):
                 # Row 객체를 Spark DataFrame으로 변환
                 spark = SparkSession.builder.getOrCreate()
                 df = spark.createDataFrame([row[0]])
-                yield df
+                
+                print("성공!!!!!!!!!!!!!!!")
+                df.show()
         
         start = end
         end = start + chunk_size
