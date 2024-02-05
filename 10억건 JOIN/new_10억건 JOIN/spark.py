@@ -21,22 +21,25 @@ if __name__ == "__main__":
 
     # Perform the inner join with aliases
     result = a1_2000_alias.join(aaaaa1_2000_alias, a1_2000_alias.id == aaaaa1_2000_alias.colNo, how='inner')
-    print("성공1")
+    end = time.time()
+    print("JOIN 성공,",f"경과 시간: {int(end - start)} 초")
 
     # Cache the DataFrame
     result.cache()
 
     # Select and show the "id" column values
-    result_id_values = result.select(col("a1.id")).limit(1)
-    print("성공2")
+    result_id_values = result.select(col("a1.id")).limit(10)
+    end = time.time()
+    print("필터링 성공,",f"경과 시간: {int(end - start)} 초")
 
     # Convert DataFrame to RDD
     result_rdd = result_id_values.rdd
 
     if result_rdd is not None:
-        for row in rdd(result_rdd):
-            print("성공!!!!!!!!!!!!!!!")
-
+       combined_df = rdd(result_rdd)
+    
+    combined_df.show()
+    print("총 소요시간,",f"경과 시간: {int(end - start)} 초")
 
 
 
