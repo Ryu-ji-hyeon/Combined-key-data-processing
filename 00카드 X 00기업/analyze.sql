@@ -213,3 +213,9 @@ SELECT
  col10,col18 업종분류,sum(col12) 사용금액
 FROM pamaster_v2_data.nettier
 group by col10,col18
+
+-- 소득 분위별 회원 등급 현황 
+SELECT 
+ col6 소득분위,col13 등급,count (col6)
+FROM pamaster_v2_data.nettier
+group by col6,col13
