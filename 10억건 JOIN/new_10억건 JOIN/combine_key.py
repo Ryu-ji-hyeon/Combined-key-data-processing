@@ -12,16 +12,16 @@ if __name__ == "__main__":
     start = time.time()
 
     # 데이터 프레임 생성
-    a1 = spark.read.csv("/home/data/2억건.csv/2억건.csv", header=True, inferSchema=True, encoding='utf-8')
+    a1 = spark.read.csv("/home/data/plus_id/1억건_id.csv", header=True, inferSchema=True, encoding='utf-8')
    #  a1_2000 = a1_2000.withColumn("seq_id", monotonically_increasing_id())
     a1 = a1.withColumnRenamed("id", "a1_id").withColumnRenamed("colNo", "a1_colNo")
   
     
-    a2 = spark.read.csv("/home/data/2억건.csv/2억건.csv", header=True, inferSchema=True, encoding='utf-8')
+    a2 = spark.read.csv("/home/data/plus_id/1억건_id.csv", header=True, inferSchema=True, encoding='utf-8')
    #  aaaaa1_2000 = aaaaa1_2000.withColumn("id", (rand() * 800000000).cast("long"))
     a2 = a2.withColumnRenamed("id", "a2_id").withColumnRenamed("colNo", "a2_colNo")
    
-    key = spark.read.csv("/home/data/2억건.csv/2억건.csv", header=True, inferSchema=True, encoding='utf-8')
+    key = spark.read.csv("/home/data/plus_id/1억건_id.csv", header=True, inferSchema=True, encoding='utf-8')
     key = key.withColumnRenamed("id", "key_id").withColumnRenamed("colNo", "key_colNo")
 
     # Create aliases for the DataFrames
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     
     combined_df.show()
     end = time.time()
-    print("총 소요시간,",f"경과 시간: {int(end - start)} 초")
+    print(f"총 소요 시간: {int(end - start)} 초")
 
 
 
