@@ -3,7 +3,7 @@ import time
 from pyspark.sql.functions import *
 
 
-def rdd_iterate(rdd, chunk_size=1000000):
+def rdd(rdd, chunk_size=1000000):
 
     indexed_rows = rdd.zipWithIndex().cache()
     
@@ -42,10 +42,5 @@ def rdd_iterate(rdd, chunk_size=1000000):
             end = start + chunk_size
     return combined_df
 
-# rdd_iterate의 반환값을 명시적으로 지정
-def rdd(rdd):
-    combined_df = rdd_iterate(rdd)
-    return combined_df
-    
     
 
