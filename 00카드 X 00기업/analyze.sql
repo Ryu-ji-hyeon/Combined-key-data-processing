@@ -192,7 +192,7 @@ END
 
 -- 회원의 거주지 분포 현황(광역시)
 SELECT 
-  col18, count(col18) 
+ col18,count (col18) 
 from pamaster_v2_data.nettier
 group by col18
 
@@ -219,3 +219,16 @@ SELECT
  col6 소득분위,col13 등급,count (col6)
 FROM pamaster_v2_data.nettier
 group by col6,col13
+
+--import csv
+LOAD DATA LOCAL INFILE '/home/data/nettier.csv'
+INTO TABLE pamaster_v2_data.nettier
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+--export csv
+select 
+* 
+from pamaster_v2_data.nettier 
+into outfile '/home/data/nettier.csv' fields terminated by ',';
