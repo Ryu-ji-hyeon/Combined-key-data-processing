@@ -220,6 +220,104 @@ SELECT
 FROM pamaster_v2_data.nettier
 group by col6,col13
 
+-- 성별 공연 관람 빈도 중복제거 
+SELECT COUNT(*) 
+FROM (
+    SELECT COUNT(col1) AS count_col1
+    FROM pamaster_v2_data.table
+    WHERE col3 = '1' AND col16 <> ''
+    GROUP BY col1   
+) AS sub;
+
+-- 연령대별 공연 관람 빈도 중복제거
+SELECT col2, COUNT(*) 
+FROM (
+    SELECT col2, COUNT(col2) AS count_col1
+    FROM pamaster_v2_data.table
+    WHERE col16 <> ''
+    GROUP BY col1 
+) AS sub
+GROUP BY col2;
+
+-- 회원등급별 관람 빈도 중복제거
+SELECT col13, COUNT(*) 
+FROM (
+    SELECT col13, COUNT(col13) AS count_col1
+    FROM pamaster_v2_data.table
+    WHERE col14 <> ''
+    GROUP BY col1 
+) AS sub
+GROUP BY col13;
+
+-- 직업별 관람 빈도 중복제거
+SELECT col5, COUNT(*) 
+FROM (
+    SELECT col5, COUNT(col5) AS count_col1
+    FROM pamaster_v2_data.table
+    WHERE col16 <> ''
+    GROUP BY col1 
+) AS sub
+GROUP BY col5;
+
+-- 소득분위별 관람 빈도 중복제거
+SELECT col6, COUNT(*) 
+FROM (
+    SELECT col6, COUNT(col6) AS count_col1
+    FROM pamaster_v2_data.table
+    WHERE col14 <> ''
+    GROUP BY col1 
+) AS sub
+GROUP BY col6;
+
+-- 고객분위별 관람 빈도 중복제거
+SELECT col7, COUNT(*) 
+FROM (
+    SELECT col7, COUNT(col7) AS count_col1
+    FROM pamaster_v2_data.table
+    WHERE col16 <> ''
+    GROUP BY col1 
+) AS sub
+GROUP BY col7;
+
+-- 자택주소지별 관람 빈도 중복제거
+SELECT col4, COUNT(*) 
+FROM (
+    SELECT col4, COUNT(col4) AS count_col1
+    FROM pamaster_v2_data.table
+    WHERE col14 <> ''
+    GROUP BY col1 
+) AS sub
+GROUP BY col4;
+
+-- 자택주소지별(광역시) 관람 빈도 중복제거
+SELECT col18, COUNT(*) 
+FROM (
+    SELECT col18, COUNT(col18) AS count_col1
+    FROM pamaster_v2_data.table
+    WHERE col16 <> ''
+    GROUP BY col1 
+) AS sub
+GROUP BY col18;
+
+-- 소득 분위별 회원등급 현황 중복제거
+SELECT col6, COUNT(*) 
+FROM (
+    SELECT col6, COUNT(col6) AS count_col1
+    FROM pamaster_v2_data.table
+    WHERE col13='싹틔우미'
+    GROUP BY col1 
+) AS sub
+GROUP BY col6;
+
+-- 거주지별 카드 사용빈도 중복제거
+SELECT col18, COUNT(*) 
+FROM (
+    SELECT col18, COUNT(col4) AS count_col1
+    FROM pamaster_v2_data.table
+    GROUP BY col1 
+) AS sub
+GROUP BY col18;
+
 --import csv
 LOAD DATA LOCAL INFILE '/home/data/nettier.csv'
 INTO TABLE pamaster_v2_data.nettier
@@ -228,7 +326,7 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
 --export csv
-select 
-* 
-from pamaster_v2_data.nettier 
-into outfile '/home/data/nettier.csv' fields terminated by ',';
+SELECT 
+ * 
+FROM pamaster_v2_data.nettier 
+INTO OUTFILE '/home/data/nettier.csv' FIELDS TERMINATED BY ',';
