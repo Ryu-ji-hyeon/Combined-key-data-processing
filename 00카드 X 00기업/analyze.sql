@@ -366,7 +366,13 @@ SET col23 =
         WHEN col6 ='8000' THEN 8000 
         WHEN col6 ='9000' THEN 9000 
         WHEN col6 ='10000' THEN 10000 
-        ELSE 0  
+        ELSE col23 
     END;
+
+-- 회원등급과 소득분위의 상관관계 계수
+SELECT 
+    CORR (col22,col23)
+FROM 
+    pamaster_v2_data.table
 
 
