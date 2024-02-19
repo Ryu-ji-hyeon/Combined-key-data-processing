@@ -331,7 +331,42 @@ SELECT
 FROM pamaster_v2_data.nettier 
 INTO OUTFILE '/home/data/nettier.csv' FIELDS TERMINATED BY ',';
 
--- 회원 등급 정수로 치환
+-- 회원등급 정수로 치환
+ALTER TABLE pamaster_v2_data.table
+ADD COLUMN col22 int;
+
 UPDATE pamaster_v2_data.table
-SET col22 = '6'
-where col13 ='노블' 
+SET col22 = 
+    CASE 
+        WHEN col13 ='무료' THEN 1 
+        WHEN col13 ='싹틔우미' THEN 2 
+        WHEN col13 ='그린' THEN 3 
+        WHEN col13 ='블루' THEN 4
+        WHEN col13 ='골드' THEN 5 
+        WHEN col13 ='노블' THEN 6
+        ELSE 0
+    END;
+
+
+-- 소득분위 정수로 치환
+ALTER TABLE pamaster_v2_data.table
+ADD COLUMN col23 int;
+
+UPDATE pamaster_v2_data.table
+SET col23 = 
+    CASE 
+        WHEN col6 ='0' THEN 0 
+        WHEN col6 ='1000' THEN 1000 
+        WHEN col6 ='2000' THEN 2000 
+        WHEN col6 ='3000' THEN 3000
+        WHEN col6 ='4000' THEN 4000 
+        WHEN col6 ='5000' THEN 5000 
+        WHEN col6 ='6000' THEN 6000 
+        WHEN col6 ='7000' THEN 7000 
+        WHEN col6 ='8000' THEN 8000 
+        WHEN col6 ='9000' THEN 9000 
+        WHEN col6 ='10000' THEN 10000 
+        ELSE 0  
+    END;
+
+
