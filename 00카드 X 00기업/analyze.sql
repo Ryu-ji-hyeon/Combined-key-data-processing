@@ -330,3 +330,8 @@ SELECT
  * 
 FROM pamaster_v2_data.nettier 
 INTO OUTFILE '/home/data/nettier.csv' FIELDS TERMINATED BY ',';
+
+-- 회원 등급 정수로 치환
+UPDATE pamaster_v2_data.table
+SET col22 = '6'
+where col13 ='노블' 
