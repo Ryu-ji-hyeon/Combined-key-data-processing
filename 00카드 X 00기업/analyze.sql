@@ -369,6 +369,22 @@ SET col23 =
         ELSE col23 
     END;
 
+-- 통계분석
+SELECT 
+    col22, 
+    col23,
+    REGR_SLOPE(col22, col23) AS 기울기, 
+    REGR_INTERCEPT(col22, col23) AS 절편, 
+    REGR_R2(col22, col23) AS R제곱, 
+    REGR_AVGY(col22, col23) AS 평균Y, 
+    REGR_AVGX(col22, col23) AS 평균X, 
+    REGR_COUNT(col22, col23) AS 개수,
+    CORR(col22, col23) AS 상관관계_계수
+FROM 
+    pamaster_v2_data.table
+GROUP BY 
+    col22,col23
+
 -- 회원등급과 소득분위의 상관관계 계수
 SELECT 
     CORR (col22,col23)
