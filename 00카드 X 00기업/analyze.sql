@@ -376,3 +376,19 @@ FROM
     pamaster_v2_data.table
 
 
+-- 상관관계 계수
+SELECT 
+    covariance / (stddev_col1 * stddev_col2) AS correlation_coefficient
+FROM (
+    SELECT 
+        SUM((t.col22 - mean_col22) * (t.col23 - mean_col23)) / COUNT(*) AS covariance,
+        SQRT(AVG(t.col22 * t.col22) - AVG(t.col22) * AVG(t.col22)) AS stddev_col1,
+        SQRT(AVG(t.col23 * t.col23) - AVG(t.col23) * AVG(t.col23)) AS stddev_col2
+    FROM (
+        SELECT 
+            AVG(col22) AS mean_col22,
+            AVG(col23) AS mean_col23
+        FROM 
+            pamaster_v2_data.table
+    ) AS subquery, pamaster_v2_data.table t
+) AS subquery2;
